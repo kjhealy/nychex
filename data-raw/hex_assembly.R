@@ -88,7 +88,10 @@ nyc_nta20_hex_sf <- bind_rows(mn_hex_sf, bx_hex_sf, bkqn_hex_sf, si_hex_sf) |>
 ## Directions for pointy-topped hexes. `spacing` is center-to-center distance.
 ## Usage: move_nta(sf, "SI9591", ref = "SI9592", dir = "se")
 ##        move_nta(sf, c("QN1401", "QN1402"), ref = "BK5692", dir = "s")
-move_nta <- function(hex_sf, nta_codes, ref, dir) {
+##        move_nta(sf, c("A", "B", "C"), ref = "X", dir = "se", anchor = "A")
+##   anchor: which NTA in the group should land at the target position
+##           (default: group centroid)
+move_nta <- function(hex_sf, nta_codes, ref, dir, anchor = NULL) {
   ## Get hex spacing from the reference hex's borough group
   ref_boro <- hex_sf$boro_name[hex_sf$nta2020 == ref]
   boro_idx <- which(hex_sf$boro_name == ref_boro &
@@ -131,8 +134,14 @@ move_nta <- function(hex_sf, nta_codes, ref, dir) {
 
   ## Move each hex in nta_codes as a group, preserving relative positions
   idx <- which(hex_sf$nta2020 %in% nta_codes)
-  group_centroid <- st_coordinates(st_centroid(st_union(hex_sf$tile_map[idx])))
-  shift <- target_pos - group_centroid
+  if (!is.null(anchor)) {
+    anchor_pos <- st_coordinates(st_centroid(
+      hex_sf$tile_map[hex_sf$nta2020 == anchor]
+    ))
+  } else {
+    anchor_pos <- st_coordinates(st_centroid(st_union(hex_sf$tile_map[idx])))
+  }
+  shift <- target_pos - anchor_pos
   hex_sf$tile_map[idx] <- hex_sf$tile_map[idx] + shift
 
   hex_sf
@@ -174,6 +183,33 @@ nyc_nta20_hex_sf <- move_nta(
   ref = "BK5692",
   dir = "se"
 )
+## QN8491 (Jamaica Bay East) — southwest of QN8381
+nyc_nta20_hex_sf <- move_nta(
+  nyc_nta20_hex_sf,
+  "QN8491",
+  ref = "QN8381",
+  dir = "sw"
+)
+## Rockaway chain + QN1491 — SE of QN8491, anchored on QN1491
+nyc_nta20_hex_sf <- move_nta(
+  nyc_nta20_hex_sf,
+  c("QN1491", "QN1401", "QN1402", "QN1403", "QN8492"),
+  ref = "QN8491",
+  dir = "se",
+  anchor = "QN1491"
+)
+## Reverse the horizontal order of the Rockaway chain:
+## Should be (W to E): QN8492, QN1403, QN1402, QN1401
+rock_ntas <- c("QN1401", "QN1402", "QN1403", "QN8492")
+rock_idx <- match(rock_ntas, nyc_nta20_hex_sf$nta2020)
+rock_geoms <- nyc_nta20_hex_sf$tile_map[rock_idx]
+rock_xs <- vapply(
+  seq_along(rock_geoms),
+  \(i) st_coordinates(st_centroid(rock_geoms[i]))[1],
+  numeric(1)
+)
+## Assign geometries in reversed x-order to get correct W-to-E sequence
+nyc_nta20_hex_sf$tile_map[rock_idx] <- rock_geoms[order(rock_xs, decreasing = TRUE)]
 ## QN0761 (Fort Totten) — slot between QN0702, QN0704, QN0703
 nyc_nta20_hex_sf <- move_nta(
   nyc_nta20_hex_sf,
