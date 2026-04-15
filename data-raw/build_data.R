@@ -11,3 +11,6 @@ source(here::here("data-raw", "hex_assembly.R"))
 nyc_nta20_hex_sf <- readRDS(here::here("data-raw", "hex_assembled.rds"))
 
 usethis::use_data(nyc_nta20_hex_sf, overwrite = TRUE, compress = "xz")
+
+## Build borough outlines
+source(here::here("data-raw", "hex_boro_outlines.R"))

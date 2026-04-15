@@ -1,0 +1,56 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# nychex
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+nychex provides tessellated hexagonal tile maps for New York City
+administrative geographies. Each polygon in the source geography is
+represented by a single hexagonal tile, arranged to approximate the
+overall spatial layout of the city.
+
+## Installation
+
+You can install the development version of nychex from
+[GitHub](https://github.com/kjhealy/nychex) with:
+
+``` r
+# install.packages("pak")
+pak::pak("kjhealy/nychex")
+```
+
+## Example
+
+```{r hex-map, fig.width = 8, fig.asp = 1.2, dpi = 150}
+library(ggplot2)
+library(nychex)
+
+ggplot(nyc_nta20_hex_sf) +
+  geom_sf(aes(fill = boro_name), color = "white", linewidth = 0.3) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(fill = "Borough") +
+  theme_void()
+```
+
+```{r hex-map-labeled, fig.width = 10, fig.asp = 1.2, dpi = 150}
+ggplot(nyc_nta20_hex_sf) +
+  geom_sf(aes(fill = boro_name), color = "white", linewidth = 0.3) +
+  geom_sf_text(aes(label = nta_abbrev), size = 1.8) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(fill = "Borough") +
+  theme_void()
+```

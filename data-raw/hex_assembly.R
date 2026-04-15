@@ -227,8 +227,8 @@ nyc_nta20_hex_sf$tile_map[rock_idx] <- rock_geoms[order(rock_xs, decreasing = TR
 nyc_nta20_hex_sf <- move_nta(
   nyc_nta20_hex_sf,
   "QN0761",
-  ref = "QN0702",
-  dir = "se"
+  ref = "QN0704",
+  dir = "ne"
 )
 
 ## Verify

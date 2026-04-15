@@ -11,15 +11,15 @@ A simple feature collection with 262 rows and 12 columns:
 \describe{
 \item{boro_code}{Borough code. 1 = Manhattan, 2 = Bronx,
 3 = Brooklyn, 4 = Queens, 5 = Staten Island.}
-\item{boro_name}{Borough name.}
 \item{county_fips}{County FIPS code.}
-\item{nta2020}{NTA 2020 identifier.}
 \item{nta_name}{Full NTA name.}
-\item{nta_abbrev}{Abbreviated NTA name.}
+\item{nta2020}{NTA 2020 identifier.}
+\item{boro_name}{Borough name.}
 \item{nta_type}{NTA type (residential or non-residential).}
 \item{cdta2020}{Community District Tabulation Area 2020 identifier.}
 \item{cdta_name}{Full CDTA name.}
 \item{shape_leng}{Perimeter length of the original NTA boundary.}
+\item{nta_abbrev}{Abbreviated NTA name.}
 \item{shape_area}{Area of the original NTA boundary.}
 \item{tile_map}{POLYGON hexagonal tile geometry (EPSG:2263).}
 }
@@ -40,12 +40,11 @@ of the city.
 }
 \details{
 The hex map was generated using the \link[tilemaps:generate_map]{tilemaps}
-algorithm applied to borough groups separately, then assembled to
-preserve NYC's overall geographic layout. Borough groups (Manhattan,
-Bronx, Brooklyn/Queens, Staten Island) were tiled independently, so
-hex sizes vary across groups. Island NTAs were added back using
-\code{\link[tilemaps:create_island]{tilemaps::create_island()}} and positioned to approximate their
-geographic locations.
+algorithm applied to borough groups separately (Manhattan, Bronx,
+Brooklyn/Queens, Staten Island), then rescaled to uniform hex size and
+assembled to preserve NYC's overall geographic layout. Island NTAs were
+added back using \code{\link[tilemaps:create_island]{tilemaps::create_island()}} and positioned to
+approximate their geographic locations.
 }
 \author{
 Kieran Healy
