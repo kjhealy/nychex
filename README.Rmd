@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# nychex
+# nychex <img src="man/figures/nychex.png" align="right" width="360" alt="nychex package hex logo">
 
 <!-- badges: start -->
 <!-- badges: end -->

@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# nychex
+# nychex <img src="man/figures/nychex.png" align="right" width="360" alt="nychex package hex logo">
 
 <!-- badges: start -->
 
