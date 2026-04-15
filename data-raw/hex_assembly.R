@@ -84,6 +84,69 @@ si_hex_sf <- translate_hex_group(si_hex_sf, hex_si, geo_si)
 nyc_nta20_hex_sf <- bind_rows(mn_hex_sf, bx_hex_sf, bkqn_hex_sf, si_hex_sf) |>
   st_set_crs(st_crs(nta20_sf))
 
+## -- Helper: move hex(es) to a neighbor position of a reference hex ---------
+## Directions for pointy-topped hexes. `spacing` is center-to-center distance.
+## Usage: move_nta(sf, "SI9591", ref = "SI9592", dir = "se")
+##        move_nta(sf, c("QN1401", "QN1402"), ref = "BK5692", dir = "s")
+move_nta <- function(hex_sf, nta_codes, ref, dir) {
+  ## Get hex spacing from the reference hex's borough group
+  ref_boro <- hex_sf$boro_name[hex_sf$nta2020 == ref]
+  boro_idx <- which(hex_sf$boro_name == ref_boro &
+    !hex_sf$nta2020 %in% nta_codes)
+  boro_coords <- st_coordinates(st_centroid(hex_sf$tile_map[boro_idx]))
+  boro_dists <- as.matrix(dist(boro_coords))
+  diag(boro_dists) <- Inf
+  spacing <- min(boro_dists)
+
+  ## Derive actual neighbor offsets from the hex grid.
+  ## Find the ref hex's nearest neighbor to get the true grid geometry.
+  ref_coord <- st_coordinates(st_centroid(hex_sf$tile_map[hex_sf$nta2020 == ref]))
+  ref_dists <- sqrt((boro_coords[, 1] - ref_coord[1])^2 +
+    (boro_coords[, 2] - ref_coord[2])^2)
+  nn_idx <- which.min(ref_dists)
+  nn_dx <- boro_coords[nn_idx, 1] - ref_coord[1]
+  nn_dy <- boro_coords[nn_idx, 2] - ref_coord[2]
+
+  ## For pointy-topped hexes with this grid's spacing:
+  ## Neighbors are at distance `spacing` in 6 directions.
+  ## The grid axes: horizontal = spacing, diagonal = (spacing/2, +-h)
+
+  ## where h = spacing * sin(60) = spacing * sqrt(3)/2
+  h <- spacing * sqrt(3) / 2
+
+  offsets <- list(
+    e  = c(spacing, 0),
+    w  = c(-spacing, 0),
+    ne = c(spacing / 2, h),
+    nw = c(-spacing / 2, h),
+    se = c(spacing / 2, -h),
+    sw = c(-spacing / 2, -h)
+  )
+  offset <- offsets[[dir]]
+
+  ref_centroid <- st_coordinates(st_centroid(hex_sf$tile_map[
+    hex_sf$nta2020 == ref
+  ]))
+  target_pos <- ref_centroid + offset
+
+  ## Move each hex in nta_codes as a group, preserving relative positions
+  idx <- which(hex_sf$nta2020 %in% nta_codes)
+  group_centroid <- st_coordinates(st_centroid(st_union(hex_sf$tile_map[idx])))
+  shift <- target_pos - group_centroid
+  hex_sf$tile_map[idx] <- hex_sf$tile_map[idx] + shift
+
+  hex_sf
+}
+
+## -- Island position adjustments --------------------------------------------
+## SI9591 (Hoffman & Swinburne Islands) — southeast of SI9592, east of SI9593
+nyc_nta20_hex_sf <- move_nta(
+  nyc_nta20_hex_sf,
+  "SI9591",
+  ref = "SI9592",
+  dir = "se"
+)
+
 ## Verify
 cat("Total hexes:", nrow(nyc_nta20_hex_sf), "\n")
 cat("Unique NTAs:", n_distinct(nyc_nta20_hex_sf$nta2020), "\n")
@@ -94,8 +157,12 @@ print(table(nyc_nta20_hex_sf$boro_name))
 expected_ntas <- nta20_sf$nta2020
 missing <- setdiff(expected_ntas, nyc_nta20_hex_sf$nta2020)
 extra <- setdiff(nyc_nta20_hex_sf$nta2020, expected_ntas)
-if (length(missing) > 0) cat("Missing NTAs:", paste(missing, collapse = ", "), "\n")
-if (length(extra) > 0) cat("Extra NTAs:", paste(extra, collapse = ", "), "\n")
+if (length(missing) > 0) {
+  cat("Missing NTAs:", paste(missing, collapse = ", "), "\n")
+}
+if (length(extra) > 0) {
+  cat("Extra NTAs:", paste(extra, collapse = ", "), "\n")
+}
 
 ## Save intermediate result
 saveRDS(nyc_nta20_hex_sf, here::here("data-raw", "hex_assembled.rds"))
