@@ -146,6 +146,20 @@ nyc_nta20_hex_sf <- move_nta(
   ref = "SI9592",
   dir = "se"
 )
+## BX1071 (Pelham Bay Park islands) — between BX0101 and BX0102
+nyc_nta20_hex_sf <- move_nta(
+  nyc_nta20_hex_sf,
+  "BX1071",
+  ref = "BX0101",
+  dir = "se"
+)
+## QN0761 (Fort Totten) — slot between QN0702, QN0704, QN0703
+nyc_nta20_hex_sf <- move_nta(
+  nyc_nta20_hex_sf,
+  "QN0761",
+  ref = "QN0702",
+  dir = "se"
+)
 
 ## Verify
 cat("Total hexes:", nrow(nyc_nta20_hex_sf), "\n")
