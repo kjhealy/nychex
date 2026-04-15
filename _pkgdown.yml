@@ -1,0 +1,29 @@
+authors:
+  Kieran Healy:
+    href: http://kieranhealy.org
+
+url: https://kjhealy.github.io/nychex/
+
+template:
+  bootstrap: 5
+  bslib:
+    base_font: {google: "IBM Plex Sans"}
+    heading_font: {google: "IBM Plex Sans"}
+    code_font: {google: "IBM Plex Mono"}
+
+reference:
+  - title: "Hex tile maps"
+    desc: Tessellated hexagonal tile maps for NYC geographies.
+    contents:
+      - nyc_nta20_hex_sf
+
+navbar:
+  right:
+   - icon: fa-github
+     href: https://github.com/kjhealy/nychex
+
+figures:
+  dev: grDevices::png
+  dpi: 300
+  fig.width: 7.2916667
+  fig.asp: 1.618

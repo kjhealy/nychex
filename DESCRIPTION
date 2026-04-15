@@ -1,0 +1,28 @@
+Package: nychex
+Title: Tessellated Hex Maps for New York City Geographies
+Version: 0.0.0.9000
+Authors@R:
+    person("Kieran", "Healy", , "kjhealy@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-9114-981X"))
+Description: Provides sf objects containing hexagonal tile maps for New York
+    City administrative geographies. Each polygon in the source geography is
+    represented by a single hexagonal tile, preserving the overall spatial
+    layout of the city.
+LazyData: true
+LazyDataCompression: xz
+Depends:
+    R (>= 4.1.0)
+License: MIT + file LICENSE
+URL: https://kjhealy.github.io/nychex/,
+    https://github.com/kjhealy/nychex
+BugReports: https://github.com/kjhealy/nychex/issues
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Suggests:
+    dplyr,
+    ggplot2,
+    nycmaps,
+    sf,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
