@@ -79,6 +79,7 @@ bkqn_hex_sf <- translate_hex_group(bkqn_hex_sf, hex_bkqn, geo_bkqn)
 mn_hex_sf <- mn_hex_sf |> mutate(tile_map = tile_map + c(-8000, 0))
 bx_hex_sf <- bx_hex_sf |> mutate(tile_map = tile_map + c(4575, 2000))
 si_hex_sf <- translate_hex_group(si_hex_sf, hex_si, geo_si)
+si_hex_sf <- si_hex_sf |> mutate(tile_map = tile_map + c(17000, 6000))
 
 ## -- Combine all groups -----------------------------------------------------
 nyc_nta20_hex_sf <- bind_rows(mn_hex_sf, bx_hex_sf, bkqn_hex_sf, si_hex_sf) |>
@@ -91,9 +92,13 @@ nyc_nta20_hex_sf <- bind_rows(mn_hex_sf, bx_hex_sf, bkqn_hex_sf, si_hex_sf) |>
 ##        move_nta(sf, c("A", "B", "C"), ref = "X", dir = "se", anchor = "A")
 ##   anchor: which NTA in the group should land at the target position
 ##           (default: group centroid)
-move_nta <- function(hex_sf, nta_codes, ref, dir, anchor = NULL) {
-  ## Get hex spacing from the reference hex's borough group
-  ref_boro <- hex_sf$boro_name[hex_sf$nta2020 == ref]
+##   spacing_ref: NTA code whose borough group determines hex spacing
+##                (default: same as ref; useful for cross-borough moves)
+move_nta <- function(hex_sf, nta_codes, ref, dir, anchor = NULL,
+                     spacing_ref = NULL) {
+  ## Get hex spacing from the appropriate borough group
+  spacing_nta <- if (!is.null(spacing_ref)) spacing_ref else ref
+  ref_boro <- hex_sf$boro_name[hex_sf$nta2020 == spacing_nta]
   boro_idx <- which(hex_sf$boro_name == ref_boro &
     !hex_sf$nta2020 %in% nta_codes)
   boro_coords <- st_coordinates(st_centroid(hex_sf$tile_map[boro_idx]))
@@ -168,6 +173,14 @@ nyc_nta20_hex_sf <- move_nta(
   "QN0151",
   ref = "QN0102",
   dir = "nw"
+)
+## MN1191 (Randall's Island) — west of QN0151 (uses BK/QN spacing)
+nyc_nta20_hex_sf <- move_nta(
+  nyc_nta20_hex_sf,
+  "MN1191",
+  ref = "QN0151",
+  dir = "w",
+  spacing_ref = "QN0102"
 )
 ## BK5692, BK1891, BK5691 (Jamaica Bay west islands) — two hops SE of BK1892
 ## First move to SE of BK1892, then one more SE hop
