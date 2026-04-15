@@ -8,34 +8,37 @@ bx_hex_sf <- readRDS(here::here("data-raw", "hex_bronx.rds"))
 bkqn_hex_sf <- readRDS(here::here("data-raw", "hex_brooklyn_queens.rds"))
 si_hex_sf <- readRDS(here::here("data-raw", "hex_staten_island.rds"))
 
-## -- Compute geographic centroids for each borough group --------------------
-geo_centroids <- nta20_sf |>
-  group_by(boro_name) |>
-  summarise(geometry = st_union(geometry)) |>
-  st_centroid() |>
-  st_coordinates()
+## -- Rescale all hexes to uniform size --------------------------------------
+## Each group has different hex sizes because generate_map() sizes tiles
+## to fit each group's extent. We pick a target area and rescale each hex
+## around its own centroid.
 
-## Brooklyn and Queens need a combined centroid
-bkqn_geo <- nta20_sf |>
-  filter(boro_name %in% c("Brooklyn", "Queens")) |>
-  summarise(geometry = st_union(geometry)) |>
-  st_centroid() |>
-  st_coordinates()
-
-geo_targets <- list(
-  Manhattan = geo_centroids[geo_centroids[, 1] %in%
-    st_coordinates(nta20_sf |> filter(boro_name == "Manhattan") |>
-    summarise(geometry = st_union(geometry)) |> st_centroid())[, 1], ],
-  Bronx = geo_centroids[geo_centroids[, 1] %in%
-    st_coordinates(nta20_sf |> filter(boro_name == "Bronx") |>
-    summarise(geometry = st_union(geometry)) |> st_centroid())[, 1], ],
-  BrooklynQueens = bkqn_geo[1, ],
-  StatenIsland = geo_centroids[geo_centroids[, 1] %in%
-    st_coordinates(nta20_sf |> filter(boro_name == "Staten Island") |>
-    summarise(geometry = st_union(geometry)) |> st_centroid())[, 1], ]
+## Scale each group uniformly around the group centroid so that both hex
+## size and inter-hex spacing scale together, preserving tessellation.
+all_areas <- c(
+  as.numeric(st_area(mn_hex_sf$tile_map)),
+  as.numeric(st_area(bx_hex_sf$tile_map)),
+  as.numeric(st_area(bkqn_hex_sf$tile_map)),
+  as.numeric(st_area(si_hex_sf$tile_map))
 )
+target_area <- median(all_areas)
+cat("Target hex area:", round(target_area), "\n")
 
-## Simpler approach: compute centroids directly
+rescale_group <- function(hex_sf, target_area) {
+  geom <- hex_sf$tile_map
+  current_area <- median(as.numeric(st_area(geom)))
+  scale_factor <- sqrt(target_area / current_area)
+  group_centroid <- st_coordinates(st_centroid(st_union(geom)))
+  hex_sf$tile_map <- (geom - group_centroid) * scale_factor + group_centroid
+  hex_sf
+}
+
+mn_hex_sf <- rescale_group(mn_hex_sf, target_area)
+bx_hex_sf <- rescale_group(bx_hex_sf, target_area)
+bkqn_hex_sf <- rescale_group(bkqn_hex_sf, target_area)
+si_hex_sf <- rescale_group(si_hex_sf, target_area)
+
+## -- Compute geographic centroids for each borough group --------------------
 get_group_centroid <- function(sf_obj, boro_filter) {
   nta20_sf |>
     filter(boro_name %in% boro_filter) |>
@@ -61,7 +64,6 @@ hex_bkqn <- hex_centroid(bkqn_hex_sf)
 hex_si <- hex_centroid(si_hex_sf)
 
 ## -- Translate each hex group to align with geographic centroids ------------
-## Use geographic centroids directly as target positions
 translate_hex_group <- function(hex_sf, current_centroid, target_centroid) {
   offset <- target_centroid - current_centroid
   hex_sf |>
@@ -71,6 +73,11 @@ translate_hex_group <- function(hex_sf, current_centroid, target_centroid) {
 mn_hex_sf <- translate_hex_group(mn_hex_sf, hex_mn, geo_mn)
 bx_hex_sf <- translate_hex_group(bx_hex_sf, hex_bx, geo_bx)
 bkqn_hex_sf <- translate_hex_group(bkqn_hex_sf, hex_bkqn, geo_bkqn)
+
+## -- Manual nudges to prevent borough overlap -------------------------------
+## Hex spacing is ~1800 ft in EPSG:2263. X = east/west, Y = north/south.
+mn_hex_sf <- mn_hex_sf |> mutate(tile_map = tile_map + c(-8000, 0))
+bx_hex_sf <- bx_hex_sf |> mutate(tile_map = tile_map + c(4575, 2000))
 si_hex_sf <- translate_hex_group(si_hex_sf, hex_si, geo_si)
 
 ## -- Combine all groups -----------------------------------------------------
