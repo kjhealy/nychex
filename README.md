@@ -47,3 +47,29 @@ ggplot(nyc_nta20_hex_sf) +
 ```
 
 <img src="man/figures/README-hex-map-labeled-1.png" alt="" width="100%" />
+
+Borough outlines are also available via `nyc_boro_hex_outlines_sf`, with
+separate outlines for Brooklyn and Queens:
+
+``` r
+ggplot() +
+  geom_sf(
+    data = nyc_nta20_hex_sf,
+    aes(fill = boro_name),
+    color = "white",
+    linewidth = 0.2,
+    alpha = 0.3
+  ) +
+  geom_sf(
+    data = nyc_boro_hex_outlines_sf,
+    aes(color = boro_name),
+    fill = NA,
+    linewidth = 0.8
+  ) +
+  scale_fill_brewer(palette = "Set2") +
+  scale_color_brewer(palette = "Set2") +
+  labs(fill = "Borough", color = "Borough") +
+  theme_void()
+```
+
+<img src="man/figures/README-hex-outlines-1.png" alt="" width="100%" />
