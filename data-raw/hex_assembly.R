@@ -153,6 +153,27 @@ nyc_nta20_hex_sf <- move_nta(
   ref = "BX0101",
   dir = "se"
 )
+## QN0151 (Rikers Island) — northwest of QN0102
+nyc_nta20_hex_sf <- move_nta(
+  nyc_nta20_hex_sf,
+  "QN0151",
+  ref = "QN0102",
+  dir = "nw"
+)
+## BK5692, BK1891, BK5691 (Jamaica Bay west islands) — two hops SE of BK1892
+## First move to SE of BK1892, then one more SE hop
+nyc_nta20_hex_sf <- move_nta(
+  nyc_nta20_hex_sf,
+  c("BK5692", "BK1891", "BK5691"),
+  ref = "BK1892",
+  dir = "se"
+)
+nyc_nta20_hex_sf <- move_nta(
+  nyc_nta20_hex_sf,
+  c("BK5692", "BK1891", "BK5691"),
+  ref = "BK5692",
+  dir = "se"
+)
 ## QN0761 (Fort Totten) — slot between QN0702, QN0704, QN0703
 nyc_nta20_hex_sf <- move_nta(
   nyc_nta20_hex_sf,
