@@ -76,7 +76,7 @@ bkqn_hex_sf <- translate_hex_group(bkqn_hex_sf, hex_bkqn, geo_bkqn)
 
 ## -- Manual nudges to prevent borough overlap -------------------------------
 ## Hex spacing is ~1800 ft in EPSG:2263. X = east/west, Y = north/south.
-mn_hex_sf <- mn_hex_sf |> mutate(tile_map = tile_map + c(-8000, 0))
+mn_hex_sf <- mn_hex_sf |> mutate(tile_map = tile_map + c(-8500, 0))
 bx_hex_sf <- bx_hex_sf |> mutate(tile_map = tile_map + c(4575, 2000))
 si_hex_sf <- translate_hex_group(si_hex_sf, hex_si, geo_si)
 si_hex_sf <- si_hex_sf |> mutate(tile_map = tile_map + c(17000, 6000))
@@ -153,6 +153,11 @@ move_nta <- function(hex_sf, nta_codes, ref, dir, anchor = NULL,
 }
 
 ## -- Island position adjustments --------------------------------------------
+## BX1003, BX0291 — nudge 1500ft W
+for (nta in c("BX1003", "BX0291")) {
+  idx <- which(nyc_nta20_hex_sf$nta2020 == nta)
+  nyc_nta20_hex_sf$tile_map[idx] <- nyc_nta20_hex_sf$tile_map[idx] + c(-1500, 0)
+}
 ## SI9591 (Hoffman & Swinburne Islands) — southeast of SI9592, east of SI9593
 nyc_nta20_hex_sf <- move_nta(
   nyc_nta20_hex_sf,
