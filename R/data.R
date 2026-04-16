@@ -44,7 +44,7 @@
 #' Brooklyn and Queens have separate outlines, so the shared border between
 #' them is visible.
 #'
-#' @format ## `nyc_boro_hex_outlines_sf`
+#' @format ## `nyc_nta_boros_hex_sf`
 #' A simple feature collection with 5 rows and 3 columns:
 #' \describe{
 #'   \item{boro_name}{Borough name.}
@@ -56,7 +56,29 @@
 #' @author Kieran Healy
 #' @source Derived from [nyc_nta20_hex_sf] by unioning hex tiles per
 #'   borough and extracting the largest polygon.
-"nyc_boro_hex_outlines_sf"
+"nyc_nta_boros_hex_sf"
+
+
+#' Borough outlines for the NYC census tract 2020 hex map
+#'
+#' Polygon outlines of the main contiguous hex area for each NYC borough,
+#' derived from [nyc_ct20_hex_sf]. Disconnected island hexes are excluded.
+#' Brooklyn and Queens have separate outlines, so the shared border between
+#' them is visible.
+#'
+#' @format ## `nyc_ct_boros_hex_sf`
+#' A simple feature collection with 5 rows and 3 columns:
+#' \describe{
+#'   \item{boro_name}{Borough name.}
+#'   \item{boro_code}{Borough code. 1 = Manhattan, 2 = Bronx,
+#'     3 = Brooklyn, 4 = Queens, 5 = Staten Island.}
+#'   \item{tile_map}{POLYGON outline geometry (EPSG:2263).}
+#' }
+#'
+#' @author Kieran Healy
+#' @source Derived from [nyc_ct20_hex_sf] by unioning hex tiles per
+#'   borough and extracting the largest polygon.
+"nyc_ct_boros_hex_sf"
 
 
 #' Hexagonal tile map of NYC census tracts (2020)

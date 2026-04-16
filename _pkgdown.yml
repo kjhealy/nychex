@@ -16,8 +16,9 @@ reference:
     desc: Tessellated hexagonal tile maps for NYC geographies.
     contents:
       - nyc_nta20_hex_sf
+      - nyc_nta_boros_hex_sf
       - nyc_ct20_hex_sf
-      - nyc_boro_hex_outlines_sf
+      - nyc_ct_boros_hex_sf
 
 navbar:
   right:

@@ -12,5 +12,11 @@ nyc_nta20_hex_sf <- readRDS(here::here("data-raw", "hex_assembled.rds"))
 
 usethis::use_data(nyc_nta20_hex_sf, overwrite = TRUE, compress = "xz")
 
-## Build borough outlines
+## Build NTA borough outlines
 source(here::here("data-raw", "hex_boro_outlines.R"))
+
+## Build census tract hex map and borough outlines
+source(here::here("data-raw", "ct_hex_assembly.R"))
+nyc_ct20_hex_sf <- readRDS(here::here("data-raw", "ct_hex_assembled.rds"))
+usethis::use_data(nyc_ct20_hex_sf, overwrite = TRUE, compress = "xz")
+source(here::here("data-raw", "ct_hex_boro_outlines.R"))
