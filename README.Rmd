@@ -78,3 +78,14 @@ ggplot() +
   labs(fill = "Borough", color = "Borough") +
   theme_void()
 ```
+
+A census tract level hex map is also available via `nyc_ct20_hex_sf`
+(2,271 tracts):
+
+```{r ct-hex-map, fig.width = 8, fig.asp = 1.2, dpi = 150}
+ggplot(nyc_ct20_hex_sf) +
+  geom_sf(aes(fill = boro_name), color = "white", linewidth = 0.1) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(fill = "Borough") +
+  theme_void()
+```

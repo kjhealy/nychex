@@ -1,6 +1,6 @@
 Package: nychex
 Title: Tessellated Hex Maps for New York City Geographies
-Version: 0.1.0
+Version: 0.2.0
 Authors@R:
     person("Kieran", "Healy", , "kjhealy@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-9114-981X"))
