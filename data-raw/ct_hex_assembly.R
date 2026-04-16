@@ -87,10 +87,9 @@ si_hex <- si_hex |> mutate(tile_map = tile_map + c(17000, 6000))
 standardize_cols <- function(hex_sf) {
   hex_sf |>
     st_set_geometry("tile_map") |>
-    mutate(boro_ct2020 = paste0(boro_code, ct2020)) |>
     select(
-      boro_ct2020, ct2020, boro_code, boro_name, nta2020, nta_name, puma,
-      tile_map
+      geoid, boro_ct2020, ct2020, boro_code, boro_name, nta2020, nta_name,
+      puma, tile_map
     )
 }
 

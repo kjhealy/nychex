@@ -68,8 +68,10 @@
 #' excluded.
 #'
 #' @format ## `nyc_ct20_hex_sf`
-#' A simple feature collection with 2271 rows and 8 columns:
+#' A simple feature collection with 2271 rows and 9 columns:
 #' \describe{
+#'   \item{geoid}{Census GEOID (state + county + tract FIPS code). Use
+#'     this column for joining with other tract-level data.}
 #'   \item{boro_ct2020}{Unique borough-tract identifier (borough code
 #'     concatenated with tract code).}
 #'   \item{ct2020}{Census tract 2020 code (not unique across boroughs).}

@@ -6,6 +6,7 @@ test_that("nyc_ct20_hex_sf has expected structure", {
   expect_equal(anyDuplicated(nyc_ct20_hex_sf$boro_ct2020), 0L)
   expect_true(all(
     c(
+      "geoid",
       "boro_ct2020",
       "ct2020",
       "boro_code",
