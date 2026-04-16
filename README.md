@@ -73,3 +73,16 @@ ggplot() +
 ```
 
 <img src="man/figures/README-hex-outlines-1.png" alt="" width="100%" />
+
+A census tract level hex map is also available via `nyc_ct20_hex_sf`
+(2,271 tracts):
+
+``` r
+ggplot(nyc_ct20_hex_sf) +
+  geom_sf(aes(fill = boro_name), color = "white", linewidth = 0.1) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(fill = "Borough") +
+  theme_void()
+```
+
+<img src="man/figures/README-ct-hex-map-1.png" alt="" width="100%" />
