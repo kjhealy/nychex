@@ -32,3 +32,9 @@ source(here::here("data-raw", "ct_hex_assembly.R"))
 nyc_ct20_hex_sf <- readRDS(here::here("data-raw", "ct_hex_assembled.rds"))
 usethis::use_data(nyc_ct20_hex_sf, overwrite = TRUE, compress = "xz")
 source(here::here("data-raw", "ct_hex_boro_outlines.R"))
+
+## Build census tract square tile map and borough outlines
+source(here::here("data-raw", "ct_sq_assembly.R"))
+nyc_ct20_sq_sf <- readRDS(here::here("data-raw", "ct_sq_assembled.rds"))
+usethis::use_data(nyc_ct20_sq_sf, overwrite = TRUE, compress = "xz")
+source(here::here("data-raw", "ct_sq_boro_outlines.R"))

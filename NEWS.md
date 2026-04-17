@@ -5,6 +5,11 @@
   hex map but with `square = TRUE`.
 * Added `nyc_nta_boros_sq_sf`: borough outline polygons for the NTA
   square tile map.
+* Added `nyc_ct20_sq_sf`: square tile map of 2,271 census tracts (2020)
+  for all five NYC boroughs. Brooklyn and Queens are tiled as separate
+  boroughs.
+* Added `nyc_ct_boros_sq_sf`: borough outline polygons for the census
+  tract square tile map.
 
 # nychex 0.2.0
 
