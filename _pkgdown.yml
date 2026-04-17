@@ -12,11 +12,13 @@ template:
     code_font: {google: "IBM Plex Mono"}
 
 reference:
-  - title: "Hex tile maps"
-    desc: Tessellated hexagonal tile maps for NYC geographies.
+  - title: "Tile maps"
+    desc: Tessellated tile maps for NYC geographies.
     contents:
       - nyc_nta20_hex_sf
+      - nyc_nta20_sq_sf
       - nyc_nta_boros_hex_sf
+      - nyc_nta_boros_sq_sf
       - nyc_ct20_hex_sf
       - nyc_ct_boros_hex_sf
 

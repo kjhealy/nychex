@@ -15,6 +15,18 @@ usethis::use_data(nyc_nta20_hex_sf, overwrite = TRUE, compress = "xz")
 ## Build NTA borough outlines
 source(here::here("data-raw", "hex_boro_outlines.R"))
 
+## Build NTA square tile map
+source(here::here("data-raw", "sq_manhattan.R"))
+source(here::here("data-raw", "sq_bronx.R"))
+source(here::here("data-raw", "sq_brooklyn_queens.R"))
+source(here::here("data-raw", "sq_staten_island.R"))
+source(here::here("data-raw", "sq_assembly.R"))
+nyc_nta20_sq_sf <- readRDS(here::here("data-raw", "sq_assembled.rds"))
+usethis::use_data(nyc_nta20_sq_sf, overwrite = TRUE, compress = "xz")
+
+## Build NTA square borough outlines
+source(here::here("data-raw", "sq_boro_outlines.R"))
+
 ## Build census tract hex map and borough outlines
 source(here::here("data-raw", "ct_hex_assembly.R"))
 nyc_ct20_hex_sf <- readRDS(here::here("data-raw", "ct_hex_assembled.rds"))

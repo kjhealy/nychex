@@ -74,6 +74,44 @@ ggplot() +
 
 <img src="man/figures/README-hex-outlines-1.png" alt="" width="100%" />
 
+A square tile variant is also available via `nyc_nta20_sq_sf`:
+
+``` r
+ggplot(nyc_nta20_sq_sf) +
+  geom_sf(aes(fill = boro_name), color = "white", linewidth = 0.3) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(fill = "Borough") +
+  theme_void()
+```
+
+<img src="man/figures/README-sq-map-1.png" alt="" width="100%" />
+
+Borough outlines for the square map are available via
+`nyc_nta_boros_sq_sf`:
+
+``` r
+ggplot() +
+  geom_sf(
+    data = nyc_nta20_sq_sf,
+    aes(fill = boro_name),
+    color = "white",
+    linewidth = 0.2,
+    alpha = 0.3
+  ) +
+  geom_sf(
+    data = nyc_nta_boros_sq_sf,
+    aes(color = boro_name),
+    fill = NA,
+    linewidth = 0.8
+  ) +
+  scale_fill_brewer(palette = "Set2") +
+  scale_color_brewer(palette = "Set2") +
+  labs(fill = "Borough", color = "Borough") +
+  theme_void()
+```
+
+<img src="man/figures/README-sq-outlines-1.png" alt="" width="100%" />
+
 A census tract level hex map is also available via `nyc_ct20_hex_sf`
 (2,271 tracts), with its own borough outlines in `nyc_ct_boros_hex_sf`:
 

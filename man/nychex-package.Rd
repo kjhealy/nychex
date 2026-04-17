@@ -6,7 +6,7 @@
 \alias{nychex-package}
 \title{nychex: Tessellated Hex Maps for New York City Geographies}
 \description{
-Provides sf objects containing hexagonal tile maps for New York City administrative geographies. Each polygon in the source geography is represented by a single hexagonal tile, preserving the overall spatial layout of the city.
+Provides sf objects containing hexagonal and square tile maps for New York City administrative geographies. Each polygon in the source geography is represented by a single tile, preserving the overall spatial layout of the city.
 }
 \seealso{
 Useful links:

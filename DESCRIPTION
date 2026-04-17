@@ -1,12 +1,12 @@
 Package: nychex
 Title: Tessellated Hex Maps for New York City Geographies
-Version: 0.2.0
+Version: 0.3.0
 Authors@R:
     person("Kieran", "Healy", , "kjhealy@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-9114-981X"))
-Description: Provides sf objects containing hexagonal tile maps for New York
-    City administrative geographies. Each polygon in the source geography is
-    represented by a single hexagonal tile, preserving the overall spatial
+Description: Provides sf objects containing hexagonal and square tile maps for
+    New York City administrative geographies. Each polygon in the source
+    geography is represented by a single tile, preserving the overall spatial
     layout of the city.
 LazyData: true
 LazyDataCompression: xz
