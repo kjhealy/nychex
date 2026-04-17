@@ -22,7 +22,7 @@ You can install the development version of nychex from
 pak::pak("kjhealy/nychex")
 ```
 
-## Example
+## Examples
 
 ``` r
 library(ggplot2)
@@ -86,3 +86,26 @@ ggplot(nyc_ct20_hex_sf) +
 ```
 
 <img src="man/figures/README-ct-hex-map-1.png" alt="" width="100%" />
+
+``` r
+ggplot() +
+  geom_sf(
+    data = nyc_ct20_hex_sf,
+    aes(fill = boro_name),
+    color = "white",
+    linewidth = 0.2,
+    alpha = 0.3
+  ) +
+  geom_sf(
+    data = nyc_ct_boros_hex_sf,
+    aes(color = boro_name),
+    fill = NA,
+    linewidth = 0.8
+  ) +
+  scale_fill_brewer(palette = "Set2") +
+  scale_color_brewer(palette = "Set2") +
+  labs(fill = "Borough", color = "Borough") +
+  theme_void()
+```
+
+<img src="man/figures/README-ct-hex-map-outlines-1.png" alt="" width="100%" />
