@@ -247,10 +247,10 @@ qn1401 <- qn1401 |> mutate(tile_map = tile_map + (jfk_s - qn1401_top))
 island_parts$qn1401 <- make_tiled_sf(qn1401, target_crs)
 
 ## QN1491 — Rockaway Community Park (1 tract)
-## Directly W of QN1401's SW tile
+## Directly W of QN1401's westernmost tile on the bottom row
 qn1401_coords <- st_coordinates(st_centroid(qn1401$tile_map))
 qn1401_min_y <- min(qn1401_coords[, 2])
-qn1401_bottom <- which(qn1401_coords[, 2] == qn1401_min_y)
+qn1401_bottom <- which(abs(qn1401_coords[, 2] - qn1401_min_y) < 1)
 qn1401_sw <- qn1401_coords[qn1401_bottom[which.min(qn1401_coords[qn1401_bottom, 1])], ]
 qn1491_pos <- qn1401_sw + c(-spacing, 0)
 
