@@ -27,8 +27,9 @@ usethis::use_data(nyc_nta20_sq_sf, overwrite = TRUE, compress = "xz")
 ## Build NTA square borough outlines
 source(here::here("data-raw", "sq_boro_outlines.R"))
 
-## Build census tract hex map and borough outlines
+## Build census tract hex map (contiguous tracts), then add islands
 source(here::here("data-raw", "ct_hex_assembly.R"))
+source(here::here("data-raw", "ct_hex_islands.R"))
 nyc_ct20_hex_sf <- readRDS(here::here("data-raw", "ct_hex_assembled.rds"))
 usethis::use_data(nyc_ct20_hex_sf, overwrite = TRUE, compress = "xz")
 source(here::here("data-raw", "ct_hex_boro_outlines.R"))

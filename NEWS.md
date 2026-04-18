@@ -10,6 +10,9 @@
   boroughs.
 * Added `nyc_ct_boros_sq_sf`: borough outline polygons for the census
   tract square tile map.
+* `nyc_ct20_hex_sf` now includes all 2,325 census tracts (previously
+  2,271). The 54 island and disconnected tracts are added as individual
+  or small-group tiles positioned near their geographic locations.
 
 # nychex 0.2.0
 

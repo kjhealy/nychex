@@ -1,6 +1,6 @@
 test_that("nyc_ct20_hex_sf has expected structure", {
   expect_s3_class(nyc_ct20_hex_sf, "sf")
-  expect_equal(nrow(nyc_ct20_hex_sf), 2271L)
+  expect_equal(nrow(nyc_ct20_hex_sf), 2325L)
   expect_true(inherits(sf::st_geometry(nyc_ct20_hex_sf), "sfc_POLYGON"))
   expect_false(any(sf::st_is_empty(nyc_ct20_hex_sf)))
   expect_equal(anyDuplicated(nyc_ct20_hex_sf$boro_ct2020), 0L)
@@ -28,11 +28,11 @@ test_that("nyc_ct20_hex_sf has all five boroughs", {
 
 test_that("nyc_ct20_hex_sf has correct borough counts", {
   counts <- table(nyc_ct20_hex_sf$boro_name)
-  expect_equal(as.integer(counts["Manhattan"]), 302L)
-  expect_equal(as.integer(counts["Bronx"]), 352L)
-  expect_equal(as.integer(counts["Brooklyn"]), 801L)
-  expect_equal(as.integer(counts["Queens"]), 691L)
-  expect_equal(as.integer(counts["Staten Island"]), 125L)
+  expect_equal(as.integer(counts["Manhattan"]), 310L)
+  expect_equal(as.integer(counts["Bronx"]), 361L)
+  expect_equal(as.integer(counts["Brooklyn"]), 804L)
+  expect_equal(as.integer(counts["Queens"]), 724L)
+  expect_equal(as.integer(counts["Staten Island"]), 126L)
 })
 
 test_that("nyc_ct20_hex_sf has valid CRS", {

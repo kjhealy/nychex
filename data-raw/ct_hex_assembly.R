@@ -108,8 +108,8 @@ cat("Unique tracts (boro_ct2020):", n_distinct(nyc_ct20_hex_sf$boro_ct2020), "\n
 cat("Borough counts:\n")
 print(table(nyc_ct20_hex_sf$boro_name))
 
-## Save
-saveRDS(nyc_ct20_hex_sf, here::here("data-raw", "ct_hex_assembled.rds"))
+## Save contiguous-only version (islands added by ct_hex_islands.R)
+saveRDS(nyc_ct20_hex_sf, here::here("data-raw", "ct_hex_contiguous.rds"))
 
 ## Save sample figures
 p <- ggplot(nyc_ct20_hex_sf) +
