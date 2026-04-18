@@ -230,7 +230,7 @@ island_parts$qn8491 <- make_island_sf(
 ## -- Rockaway chain: built E to W, positioned relative to JFK ----------------
 
 ## QN1401 — Far Rockaway (11 contiguous tracts)
-## Northernmost hex placed SE of JFK, then nudged NW
+## Northernmost hex placed at the SE hex neighbor of JFK
 qn1401 <- prep_tracts("QN1401")
 set.seed(42)
 qn1401 <- qn1401 |>
@@ -243,9 +243,8 @@ jfk_pos <- st_coordinates(st_centroid(
 )) |> as.numeric()
 qn1401_coords <- st_coordinates(st_centroid(qn1401$tile_map))
 qn1401_top <- qn1401_coords[which.max(qn1401_coords[, 2]), ]
-jfk_se <- jfk_pos + c(spacing, -spacing * 1.5)
-nw_nudge <- c(-1000 / sqrt(2), 1000 / sqrt(2))
-qn1401 <- qn1401 |> mutate(tile_map = tile_map + (jfk_se - qn1401_top) + nw_nudge)
+jfk_se <- jfk_pos + c(spacing / 2, -spacing * sqrt(3) / 2)
+qn1401 <- qn1401 |> mutate(tile_map = tile_map + (jfk_se - qn1401_top))
 
 island_parts$qn1401 <- make_tiled_sf(qn1401, target_crs)
 
