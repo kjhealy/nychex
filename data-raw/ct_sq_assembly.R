@@ -105,8 +105,8 @@ cat("Unique tracts (boro_ct2020):", n_distinct(nyc_ct20_sq_sf$boro_ct2020), "\n"
 cat("Borough counts:\n")
 print(table(nyc_ct20_sq_sf$boro_name))
 
-## Save
-saveRDS(nyc_ct20_sq_sf, here::here("data-raw", "ct_sq_assembled.rds"))
+## Save contiguous-only version (islands added by ct_sq_islands.R)
+saveRDS(nyc_ct20_sq_sf, here::here("data-raw", "ct_sq_contiguous.rds"))
 
 ## Save sample figures
 p <- ggplot(nyc_ct20_sq_sf) +

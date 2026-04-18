@@ -113,7 +113,7 @@ ggplot() +
 <img src="man/figures/README-sq-outlines-1.png" alt="" width="100%" />
 
 Census tract level square tile maps are available via `nyc_ct20_sq_sf`
-(2,271 tracts), with borough outlines in `nyc_ct_boros_sq_sf`:
+(2,325 tracts), with borough outlines in `nyc_ct_boros_sq_sf`:
 
 ``` r
 ggplot(nyc_ct20_sq_sf) +
@@ -149,7 +149,7 @@ ggplot() +
 <img src="man/figures/README-ct-sq-map-outlines-1.png" alt="" width="100%" />
 
 A census tract level hex map is also available via `nyc_ct20_hex_sf`
-(2,271 tracts), with its own borough outlines in `nyc_ct_boros_hex_sf`:
+(2,325 tracts), with its own borough outlines in `nyc_ct_boros_hex_sf`:
 
 ``` r
 ggplot(nyc_ct20_hex_sf) +

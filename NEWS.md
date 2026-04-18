@@ -13,6 +13,8 @@
 * `nyc_ct20_hex_sf` now includes all 2,325 census tracts (previously
   2,271). The 54 island and disconnected tracts are added as individual
   or small-group tiles positioned near their geographic locations.
+* `nyc_ct20_sq_sf` now includes all 2,325 census tracts (previously
+  2,271), with island tracts handled the same way.
 
 # nychex 0.2.0
 

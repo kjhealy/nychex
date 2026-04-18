@@ -189,14 +189,13 @@
 
 #' Square tile map of NYC census tracts (2020)
 #'
-#' A tessellated square tile map of New York City's 2020 census tracts.
-#' Each tract in the main contiguous area of each borough is represented
-#' by a single square polygon tile, arranged to approximate the
-#' geographic layout of the city. Island and disconnected tracts are
-#' excluded.
+#' A tessellated square tile map of all 2,325 New York City 2020
+#' census tracts. Each tract is represented by a single square
+#' polygon tile, arranged to approximate the geographic layout of the
+#' city.
 #'
 #' @format ## `nyc_ct20_sq_sf`
-#' A simple feature collection with 2271 rows and 9 columns:
+#' A simple feature collection with 2325 rows and 9 columns:
 #' \describe{
 #'   \item{geoid}{Census GEOID (state + county + tract FIPS code). Use
 #'     this column for joining with other tract-level data.}
@@ -222,9 +221,10 @@
 #' rather than combined, so there is a visible gap between them.
 #'
 #' Island tracts (those in geographically disconnected NTAs or that
-#' become disconnected after polygon simplification) are not included
-#' in this object. The 2,271 tracts represented are the main contiguous
-#' tracts for each borough out of 2,325 total NYC census tracts.
+#' become disconnected after polygon simplification) are included as
+#' individual or small-group tiles positioned near their geographic
+#' locations. Multi-tract island NTAs (e.g. Rockaways, City Island)
+#' are tiled as contiguous groups where possible.
 #'
 #' @author Kieran Healy
 #' @source Derived from census tract 2020 boundaries in the \pkg{nycmaps}

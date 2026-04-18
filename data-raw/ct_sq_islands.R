@@ -2,17 +2,18 @@ source(here::here("data-raw", "_shared.R"))
 
 ct20_sf <- nycmaps::nyc_census_tracts_2020_sf
 nta_hex <- readRDS(here::here("data-raw", "hex_assembled.rds"))
-ct_hex <- readRDS(here::here("data-raw", "ct_hex_contiguous.rds"))
+ct_sq <- readRDS(here::here("data-raw", "ct_sq_contiguous.rds"))
 
 ## Identify missing tracts
 missing_sf <- ct20_sf |>
-  filter(!geoid %in% ct_hex$geoid)
+  filter(!geoid %in% ct_sq$geoid)
 
 cat("Missing tracts to add:", nrow(missing_sf), "\n")
 
-## Target tile area (matches existing CT hex tiles)
-target_area <- median(as.numeric(st_area(ct_hex$tile_map)))
-spacing <- 1672
+## Target tile area (matches existing CT square tiles)
+target_area <- median(as.numeric(st_area(ct_sq$tile_map)))
+spacing <- sqrt(target_area)
+cat("Square tile spacing:", round(spacing), "\n")
 
 ## -- Helpers ------------------------------------------------------------------
 nta_pos <- function(nta_code) {
@@ -66,7 +67,7 @@ find_components <- function(sf_obj) {
   components
 }
 
-template_tiles <- ct_hex$tile_map[1:10]
+template_tiles <- ct_sq$tile_map[1:10]
 
 make_island_sf <- function(src_sf, tile_geom, crs) {
   src_sf |>
@@ -90,14 +91,14 @@ make_tiled_sf <- function(sf_obj, crs) {
     st_set_crs(crs)
 }
 
-target_crs <- st_crs(ct_hex)
+target_crs <- st_crs(ct_sq)
 island_parts <- list()
 
 ## == MANHATTAN ================================================================
 
 ## MN0191 — Battery/Governors/Ellis/Liberty (3 non-contiguous tracts)
 mn0191 <- prep_tracts("MN0191")
-mn0191_ref <- nta_pos("MN0191") + c(2000, 4000)
+mn0191_ref <- nta_pos("MN0191") + c(2500, 4000)
 mn0191_tiles <- purrr::map(
   seq_len(nrow(mn0191)),
   \(i) create_island(template_tiles, mn0191_ref + c((i - 2) * spacing, 0))
@@ -115,13 +116,13 @@ island_parts$mn1191 <- make_island_sf(
 mn0801 <- prep_tracts("MN0801")
 set.seed(42)
 mn0801 <- mn0801 |>
-  mutate(tile_map = generate_map(geometry, square = FALSE, flat_topped = FALSE))
+  mutate(tile_map = generate_map(geometry, square = TRUE))
 mn0801 <- rescale_island_group(mn0801, target_area)
 mn0801 <- move_group(mn0801, nta_pos("MN1191") + c(0, -3 * spacing))
 island_parts$mn0801 <- make_tiled_sf(mn0801, target_crs)
 
 ## BX0802 — Marble Hill (1 tract, disconnected from Manhattan)
-mn_bbox <- st_bbox(ct_hex$tile_map[ct_hex$boro_name == "Manhattan"])
+mn_bbox <- st_bbox(ct_sq$tile_map[ct_sq$boro_name == "Manhattan"])
 island_parts$bx0802 <- make_island_sf(
   missing_sf |> filter(nta2020 == "BX0802"),
   create_island(template_tiles, c(mn_bbox["xmax"] + spacing, mn_bbox["ymax"])),
@@ -139,7 +140,7 @@ bx1003_islands <- bx1003[bx1003_comps != largest_comp, ]
 
 set.seed(42)
 bx1003_main <- bx1003_main |>
-  mutate(tile_map = generate_map(geometry, square = FALSE, flat_topped = FALSE))
+  mutate(tile_map = generate_map(geometry, square = TRUE))
 bx1003_main <- rescale_island_group(bx1003_main, target_area)
 bx1003_target <- nta_pos("BX1003") + c(-17000, -9560)
 bx1003_main <- move_group(bx1003_main, bx1003_target)
@@ -159,7 +160,7 @@ island_parts$bx1003_islands <- make_island_sf(
 )
 
 ## BX1071 — Hart Island (1 tract)
-## Positioned directly E of the easternmost hex of BX1003
+## Positioned directly E of the easternmost tile of BX1003
 bx1003_main_coords <- st_coordinates(st_centroid(bx1003_main$tile_map))
 bx1003_island_coords <- do.call(rbind, lapply(
   bx1003_island_tiles, \(t) st_coordinates(st_centroid(t))
@@ -176,10 +177,9 @@ island_parts$bx1071 <- make_island_sf(
 ## BX0291 — North & South Brother Islands (1 tract)
 ## Positioned NW of QN0151
 qn0151_final <- nta_pos("QN0151") + c(-2000, -1500)
-nw_offset <- c(-spacing * sqrt(3) / 2, spacing * 1.5)
 island_parts$bx0291 <- make_island_sf(
   missing_sf |> filter(nta2020 == "BX0291"),
-  create_island(template_tiles, qn0151_final + nw_offset),
+  create_island(template_tiles, qn0151_final + c(-spacing, spacing)),
   target_crs
 )
 
@@ -201,12 +201,12 @@ island_parts$bk5692 <- make_island_sf(
 )
 island_parts$bk1891 <- make_island_sf(
   missing_sf |> filter(nta2020 == "BK1891"),
-  create_island(template_tiles, bk5692_pos + c(-spacing, -spacing * 1.5)),
+  create_island(template_tiles, bk5692_pos + c(-spacing, -spacing)),
   target_crs
 )
 island_parts$bk5691 <- make_island_sf(
   missing_sf |> filter(nta2020 == "BK5691"),
-  create_island(template_tiles, bk5692_pos + c(spacing, -spacing * 1.5)),
+  create_island(template_tiles, bk5692_pos + c(spacing, -spacing)),
   target_crs
 )
 
@@ -220,7 +220,6 @@ island_parts$qn0761 <- make_island_sf(
 )
 
 ## QN8491 — Jamaica Bay East (1 tract)
-## Positioned at NTA hex location + 5000ft N
 island_parts$qn8491 <- make_island_sf(
   missing_sf |> filter(nta2020 == "QN8491"),
   create_island(template_tiles, nta_pos("QN8491") + c(0, 5000)),
@@ -230,22 +229,20 @@ island_parts$qn8491 <- make_island_sf(
 ## -- Rockaway chain: built E to W, positioned relative to JFK ----------------
 
 ## QN1401 — Far Rockaway (11 contiguous tracts)
-## Northernmost hex placed SE of JFK, then nudged NW
 qn1401 <- prep_tracts("QN1401")
 set.seed(42)
 qn1401 <- qn1401 |>
-  mutate(tile_map = generate_map(geometry, square = FALSE, flat_topped = FALSE))
+  mutate(tile_map = generate_map(geometry, square = TRUE))
 qn1401 <- rescale_island_group(qn1401, target_area)
 qn1401 <- move_group(qn1401, nta_pos("QN1401"))
 
 jfk_pos <- st_coordinates(st_centroid(
-  ct_hex$tile_map[ct_hex$nta2020 == "QN8381"]
+  ct_sq$tile_map[ct_sq$nta2020 == "QN8381"]
 )) |> as.numeric()
 qn1401_coords <- st_coordinates(st_centroid(qn1401$tile_map))
 qn1401_top <- qn1401_coords[which.max(qn1401_coords[, 2]), ]
-jfk_se <- jfk_pos + c(spacing, -spacing * 1.5)
-nw_nudge <- c(-1000 / sqrt(2), 1000 / sqrt(2))
-qn1401 <- qn1401 |> mutate(tile_map = tile_map + (jfk_se - qn1401_top) + nw_nudge)
+jfk_s <- jfk_pos + c(0, -spacing)
+qn1401 <- qn1401 |> mutate(tile_map = tile_map + (jfk_s - qn1401_top))
 
 island_parts$qn1401 <- make_tiled_sf(qn1401, target_crs)
 
@@ -264,23 +261,22 @@ island_parts$qn1491 <- make_island_sf(
 )
 
 ## QN1402 — Rockaway Beach (9 contiguous tracts)
-## Northernmost hex placed SE of QN1491
+## Northernmost tile placed SE of QN1491
 qn1402 <- prep_tracts("QN1402")
 set.seed(42)
 qn1402 <- qn1402 |>
-  mutate(tile_map = generate_map(geometry, square = FALSE, flat_topped = FALSE))
+  mutate(tile_map = generate_map(geometry, square = TRUE))
 qn1402 <- rescale_island_group(qn1402, target_area)
 qn1402 <- move_group(qn1402, nta_pos("QN1402"))
 
 qn1402_coords <- st_coordinates(st_centroid(qn1402$tile_map))
 qn1402_top <- qn1402_coords[which.max(qn1402_coords[, 2]), ]
-qn1402_target_top <- qn1491_pos + c(spacing / 2, -spacing * sqrt(3) / 2)
+qn1402_target_top <- qn1491_pos + c(0, -spacing)
 qn1402 <- qn1402 |> mutate(tile_map = tile_map + (qn1402_target_top - qn1402_top))
 
 island_parts$qn1402 <- make_tiled_sf(qn1402, target_crs)
 
 ## QN1403 — Breezy Point area (7 tracts: 5 contiguous + 2 islands)
-## Main group's easternmost hex placed W of QN1402's westernmost
 qn1403 <- prep_tracts("QN1403")
 qn1403_comps <- find_components(qn1403)
 largest_comp <- as.integer(names(which.max(table(qn1403_comps))))
@@ -289,10 +285,11 @@ qn1403_islands <- qn1403[qn1403_comps != largest_comp, ]
 
 set.seed(42)
 qn1403_main <- qn1403_main |>
-  mutate(tile_map = generate_map(geometry, square = FALSE, flat_topped = FALSE))
+  mutate(tile_map = generate_map(geometry, square = TRUE))
 qn1403_main <- rescale_island_group(qn1403_main, target_area)
 qn1403_main <- move_group(qn1403_main, nta_pos("QN1403"))
 
+## Easternmost tile placed W of QN1402's westernmost
 qn1402_coords <- st_coordinates(st_centroid(qn1402$tile_map))
 qn1402_w <- qn1402_coords[which.min(qn1402_coords[, 1]), ]
 qn1403_main_coords <- st_coordinates(st_centroid(qn1403_main$tile_map))
@@ -300,19 +297,33 @@ qn1403_e <- qn1403_main_coords[which.max(qn1403_main_coords[, 1]), ]
 qn1403_main <- qn1403_main |>
   mutate(tile_map = tile_map + (qn1402_w + c(-spacing, 0) - qn1403_e))
 
+## Align top row right edges with bottom row right edges
+qn1403_main_coords <- st_coordinates(st_centroid(qn1403_main$tile_map))
+qn1403_main_ys <- sort(unique(round(qn1403_main_coords[, 2])))
+bottom_y <- qn1403_main_ys[1]
+top_y <- qn1403_main_ys[2]
+bottom_max_x <- max(qn1403_main_coords[round(qn1403_main_coords[, 2]) == bottom_y, 1])
+top_max_x <- max(qn1403_main_coords[round(qn1403_main_coords[, 2]) == top_y, 1])
+top_row_mask <- round(qn1403_main_coords[, 2]) == top_y
+qn1403_main$tile_map[top_row_mask] <- qn1403_main$tile_map[top_row_mask] +
+  c(bottom_max_x - top_max_x, 0)
+
+## Nudge QN1403 main east to close gap with QN1402
+qn1403_main <- qn1403_main |> mutate(tile_map = tile_map + c(3250, 0))
+
 island_parts$qn1403_main <- make_tiled_sf(qn1403_main, target_crs)
 
-## QN1403 island tracts (2) — just N of QN1403 main center
+## QN1403 island tracts (2) — just N of QN1403 main, shifted W and N
 qn1403_main_coords <- st_coordinates(st_centroid(qn1403_main$tile_map))
 qn1403_main_top_y <- max(qn1403_main_coords[, 2])
-qn1403_main_center_x <- mean(qn1403_main_coords[, 1])
+qn1403_main_w_x <- min(qn1403_main_coords[, 1])
 qn1403_island_tiles <- purrr::map(
   seq_len(nrow(qn1403_islands)),
   \(i) create_island(
     template_tiles,
     c(
-      qn1403_main_center_x + (i - 1.5) * spacing,
-      qn1403_main_top_y + spacing * 1.5
+      qn1403_main_w_x + (i - 1) * spacing - 1000,
+      qn1403_main_top_y + spacing + 500
     )
   )
 )
@@ -321,11 +332,11 @@ island_parts$qn1403_islands <- make_island_sf(
 )
 
 ## QN8492 — Jacob Riis Park (3 contiguous tracts)
-## Easternmost hex placed W of QN1403 main's westernmost
+## Easternmost tile placed W of QN1403 main's westernmost (after nudge)
 qn8492 <- prep_tracts("QN8492")
 set.seed(42)
 qn8492 <- qn8492 |>
-  mutate(tile_map = generate_map(geometry, square = FALSE, flat_topped = FALSE))
+  mutate(tile_map = generate_map(geometry, square = TRUE))
 qn8492 <- rescale_island_group(qn8492, target_area)
 qn8492 <- move_group(qn8492, nta_pos("QN8492"))
 
@@ -341,11 +352,10 @@ island_parts$qn8492 <- make_tiled_sf(qn8492, target_crs)
 ## == STATEN ISLAND ============================================================
 
 ## SI9591 — Hoffman & Swinburne Islands (1 tract)
-## Position SE of main SI cluster
-si_main <- ct_hex |> filter(boro_name == "Staten Island")
+si_main <- ct_sq |> filter(boro_name == "Staten Island")
 si_bbox <- st_bbox(si_main$tile_map)
 si9591_pos <- c(si_bbox["xmax"] + spacing, si_bbox["ymin"])
-si9591_pos <- si9591_pos + c(-6000 / sqrt(2) - 4000, 6000 / sqrt(2))
+si9591_pos <- si9591_pos + c(-6000 / sqrt(2) - 4250, 6000 / sqrt(2))
 
 island_parts$si9591 <- make_island_sf(
   missing_sf |> filter(nta2020 == "SI9591"),
@@ -357,23 +367,23 @@ island_parts$si9591 <- make_island_sf(
 all_islands <- bind_rows(island_parts)
 cat("Island tracts assembled:", nrow(all_islands), "\n")
 
-ct_hex_full <- bind_rows(ct_hex, all_islands)
-cat("Full CT hex map:", nrow(ct_hex_full), "tracts\n")
-cat("Unique geoids:", n_distinct(ct_hex_full$geoid), "\n")
+ct_sq_full <- bind_rows(ct_sq, all_islands)
+cat("Full CT square map:", nrow(ct_sq_full), "tracts\n")
+cat("Unique geoids:", n_distinct(ct_sq_full$geoid), "\n")
 cat("Borough counts:\n")
-print(table(ct_hex_full$boro_name))
+print(table(ct_sq_full$boro_name))
 
 ## Save
-saveRDS(ct_hex_full, here::here("data-raw", "ct_hex_assembled.rds"))
+saveRDS(ct_sq_full, here::here("data-raw", "ct_sq_assembled.rds"))
 
 ## Sample figure
-p <- ggplot(ct_hex_full) +
+p <- ggplot(ct_sq_full) +
   geom_sf(aes(fill = boro_name), color = "white", linewidth = 0.1) +
   scale_fill_brewer(palette = "Set2") +
-  labs(title = "NYC Census Tract 2020 Hex Map", fill = "Borough") +
+  labs(title = "NYC Census Tract 2020 Square Map", fill = "Borough") +
   theme_void()
 
 ggsave(
-  here::here("data-raw", "sample-figures", "nyc_ct_hex_assembled.png"),
+  here::here("data-raw", "sample-figures", "nyc_ct_sq_assembled.png"),
   p, width = 12, height = 14, dpi = 150, bg = "white"
 )
