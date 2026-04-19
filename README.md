@@ -6,6 +6,8 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/kjhealy/nychex/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/kjhealy/nychex/actions/workflows/R-CMD-check.yaml)
+[![R-universe
+version](https://kjhealy.r-universe.dev/nychex/badges/version)](https://kjhealy.r-universe.dev/nychex)
 <!-- badges: end -->
 
 nychex provides tessellated hexagonal and and square tile maps for New
@@ -22,6 +24,19 @@ You can install the development version of nychex from
 # install.packages("pak")
 pak::pak("kjhealy/nychex")
 ```
+
+Alternatively, install this package from my
+[r-universe](https://kjhealy.r-universe.dev):
+
+``` r
+install.packages(
+  "nychex",
+  repos = c("https://kjhealy.r-universe.dev", "https://cloud.r-project.org")
+)
+```
+
+Including `https://cloud.r-project.org` ensures dependencies on CRAN are
+resolved automatically.
 
 ## NTA-level Hex Tiles and Outlines
 
