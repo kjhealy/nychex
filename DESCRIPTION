@@ -22,7 +22,6 @@ RoxygenNote: 7.3.3
 Suggests:
     dplyr,
     ggplot2,
-    nycmaps,
     sf,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
