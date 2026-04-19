@@ -7,9 +7,9 @@
 
 <!-- badges: end -->
 
-nychex provides tessellated hexagonal tile maps for New York City
-administrative geographies. Each polygon in the source geography is
-represented by a single hexagonal tile, arranged to approximate the
+nychex provides tessellated hexagonal and and square tile maps for New
+York City administrative geographies. Each polygon in the source
+geography is represented by a single tile, arranged to approximate the
 overall spatial layout of the city.
 
 ## Installation
