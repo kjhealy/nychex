@@ -5,6 +5,7 @@
 
 <!-- badges: start -->
 
+[![R-CMD-check](https://github.com/kjhealy/nychex/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/kjhealy/nychex/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 nychex provides tessellated hexagonal and and square tile maps for New
