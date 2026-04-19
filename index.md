@@ -15,6 +15,19 @@ You can install the development version of nychex from
 pak::pak("kjhealy/nychex")
 ```
 
+Alternatively, install this package from my
+[r-universe](https://kjhealy.r-universe.dev):
+
+``` r
+install.packages(
+  "nychex",
+  repos = c("https://kjhealy.r-universe.dev", "https://cloud.r-project.org")
+)
+```
+
+Including `https://cloud.r-project.org` ensures dependencies on CRAN are
+resolved automatically.
+
 ## NTA-level Hex Tiles and Outlines
 
 ``` r
