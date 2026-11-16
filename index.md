@@ -11,6 +11,7 @@ You can install the development version of nychex from
 [GitHub](https://github.com/kjhealy/nychex) with:
 
 ``` r
+
 # install.packages("pak")
 pak::pak("kjhealy/nychex")
 ```
@@ -19,6 +20,7 @@ Alternatively, install this package from my
 [r-universe](https://kjhealy.r-universe.dev):
 
 ``` r
+
 install.packages(
   "nychex",
   repos = c("https://kjhealy.r-universe.dev", "https://cloud.r-project.org")
@@ -31,6 +33,7 @@ resolved automatically.
 ## NTA-level Hex Tiles and Outlines
 
 ``` r
+
 library(ggplot2)
 library(nychex)
 
@@ -44,6 +47,7 @@ ggplot(nyc_nta20_hex_sf) +
 ![](reference/figures/README-hex-map-1.png)
 
 ``` r
+
 ggplot(nyc_nta20_hex_sf) +
   geom_sf(aes(fill = boro_name), color = "white", linewidth = 0.3) +
   geom_sf_text(aes(label = nta_abbrev), size = 1.8) +
@@ -58,6 +62,7 @@ Borough outlines are also available via `nyc_nta_boros_hex_sf`, with
 separate outlines for Brooklyn and Queens:
 
 ``` r
+
 ggplot() +
   geom_sf(
     data = nyc_nta20_hex_sf,
@@ -86,6 +91,7 @@ A census tract level hex map is also available via `nyc_ct20_hex_sf`
 (2,325 tracts), with its own borough outlines in `nyc_ct_boros_hex_sf`:
 
 ``` r
+
 ggplot(nyc_ct20_hex_sf) +
   geom_sf(aes(fill = boro_name), color = "white", linewidth = 0.1) +
   scale_fill_brewer(palette = "Set2") +
@@ -96,6 +102,7 @@ ggplot(nyc_ct20_hex_sf) +
 ![](reference/figures/README-ct-hex-map-1.png)
 
 ``` r
+
 ggplot() +
   geom_sf(
     data = nyc_ct20_hex_sf,
@@ -123,6 +130,7 @@ ggplot() +
 A square tile variant is available via `nyc_nta20_sq_sf`:
 
 ``` r
+
 ggplot(nyc_nta20_sq_sf) +
   geom_sf(aes(fill = boro_name), color = "white", linewidth = 0.3) +
   scale_fill_brewer(palette = "Set2") +
@@ -136,6 +144,7 @@ Borough outlines for the square map are available via
 `nyc_nta_boros_sq_sf`:
 
 ``` r
+
 ggplot() +
   geom_sf(
     data = nyc_nta20_sq_sf,
@@ -164,6 +173,7 @@ Census tract level square tile maps are available via `nyc_ct20_sq_sf`
 (2,325 tracts), with borough outlines in `nyc_ct_boros_sq_sf`:
 
 ``` r
+
 ggplot(nyc_ct20_sq_sf) +
   geom_sf(aes(fill = boro_name), color = "white", linewidth = 0.1) +
   scale_fill_brewer(palette = "Set2") +
@@ -174,6 +184,7 @@ ggplot(nyc_ct20_sq_sf) +
 ![](reference/figures/README-ct-sq-map-1.png)
 
 ``` r
+
 ggplot() +
   geom_sf(
     data = nyc_ct20_sq_sf,
